@@ -9,8 +9,7 @@ export async function updateUser(req, res) {
 
         if (!user) {
             return res.status(401).json({
-                message: "Unauthorized",
-                error: true,
+                error: "Unauthorized",
             });
         }
 
@@ -32,14 +31,9 @@ export async function updateUser(req, res) {
 
         return res.status(200).json({
             message: "User updated",
-            data: updatedUserDetail,
-            success: true,
         });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({
-            message: "Internal server error",
-            error: true,
-        });
+        return res.status(500).json({ error: "Internal server error" });
     }
 }

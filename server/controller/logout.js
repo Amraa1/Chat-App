@@ -1,12 +1,13 @@
 export async function logout(req, res) {
     try {
         const cookieOptions = {
-            http: true,
+            maxAge: 3600000, // cookie expires in 1 hour
+            httpOnly: true,
             secure: true,
+            sameSite: "strict",
         };
         return res.cookie("token", "", cookieOptions).status(200).json({
-            message: "Logged out successfully",
-            success: true,
+            message: "Logout successful",
         });
     } catch (error) {
         console.log(error);

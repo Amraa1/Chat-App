@@ -1,5 +1,5 @@
 import userModel from "../models/UserModel.js";
-import bcrypt from "bcryptjs";
+import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export async function checkPassword(req, res) {
@@ -8,17 +8,15 @@ export async function checkPassword(req, res) {
         const user = await userModel.findById(userId);
         if (!user) {
             return res.status(404).json({
-                message: "User not found",
-                error: true,
+                error: "Not found",
             });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const verifyPassword = await bcryptjs.compare(password, user.password);
 
-        if (!isMatch) {
-            return res.status(400).json({
-                message: "Incorrect password",
-                error: true,
+        if (!verifyPassword) {
+            return res.status(401).json({
+                error: "Unauthorized",
             });
         }
 
@@ -31,19 +29,19 @@ export async function checkPassword(req, res) {
         );
 
         const cookieOptions = {
-            http: true,
+            maxAge: 3600000, // cookie expires in 1 hour
+            httpOnly: true,
             secure: true,
+            sameSite: "strict",
         };
 
         return res.cookie("token", token, cookieOptions).status(200).json({
-            message: "Logged in successfully",
-            token: token,
-            success: true,
+            message: "Login successful",
         });
     } catch (error) {
+        console.log(`Error while checking password: ${error.message || error}`);
         return res.status(500).json({
             message: "Internal server error",
-            error: true,
         });
     }
 }

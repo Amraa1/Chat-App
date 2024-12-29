@@ -13,15 +13,26 @@ app.use(
         credentials: true,
     })
 );
+const handleError = (err, req, res, next) => {
+    const status = err.status || 500;
+    const message = err.message || "Internal Server Error";
+
+    // Log the error for debugging
+    console.error(err);
+
+    res.status(status).json({ error: message });
+};
+
 app.use(express.json());
 app.use(cookieParser());
+app.use(handleError);
 
 const PORT = process.env.PORT || 8080;
 
 // api endpoints
 app.get("/", (req, res) => {
     res.json({
-        message: "Hello World",
+        message: "Welcome to Chat App",
     });
 });
 app.use("/api", router);
